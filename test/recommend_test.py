@@ -70,8 +70,8 @@ def main() -> None:
         return
 
     # 1) ユーザの内部レーティング取得
-    rate, *_ = UserRating(username)      # UserRating が (rating, …) を返す前提
-    print(f"ユーザ {username} のレーティング: {rate}")
+    rate, cnt = UserRating(username)      # UserRating が (rating, …) を返す前提
+    print(f"ユーザ {username} のレーティング: {rate}, rated参加回数: {cnt}")
 
     # 2) 問題モデル取得 → list 化
     problem_models = get_problem_models()
