@@ -20,9 +20,9 @@ def UserRating(username):
         # print(f"Latest Rating: {latestRating}")
         ratedCount = len([participation for participation in user_info if participation["IsRated"]])
         # print(f"Rated Count: {ratedCount}")
-        return {latestRating, ratedCount}
+        return tuple([latestRating, ratedCount])
     else:
-        return {0, 0}
+        return tuple([0, 0])
 
 # res = UserRating("ritsuepi")
 # print(res)

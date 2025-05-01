@@ -105,11 +105,13 @@ def main() -> None:
     print("Problem models fetched successfully.")
 
     # 例 : abc032_c の DifficultyModel
+    for k, v in problem_models.items():
+        print(f"{k}-> {v}")
     src = problem_models.get("abc032_c")
     if src is None:
         print("Problem model 'abc032_c' not found.")
         return
-
+    #1545 はおれのレート
     dm = to_difficulty_model(src)
     prob = predict_solve_probability(dm, 1545)
     print(f"[difficulty] internal_rating=1545 → solve_prob={prob:.6f}")
@@ -120,6 +122,7 @@ def main() -> None:
     except (KeyError, ValueError, TypeError) as e:
         print(f"TimeModel 変換失敗: {e}")
         return
+
 
     sec = predict_solve_time(tm, 1545)
     print(f"[time] internal_rating=1545 → solve_time={sec:.2f} 秒")
