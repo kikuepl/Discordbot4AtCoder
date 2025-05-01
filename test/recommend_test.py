@@ -86,7 +86,7 @@ def main() -> None:
     for pid, model in model_list:
         prob = predict_solve_probability(model, rate)   # 0–1
         prob_pct = prob * 100                           # 百分率に換算
-        if 75 <= prob_pct <= 85:
+        if 45 <= prob_pct <= 55:
             recommends.append((pid, prob_pct))
 
     # 4) 結果表示
@@ -97,9 +97,12 @@ def main() -> None:
     # 0.5 に近い順（≒難易度がちょうど良い順）に並べ替え
     recommends.sort(key=lambda x: abs(50 - x[1]))
 
-    print("\n★★★ あなたにおすすめの問題 (成功確率 75–85%) ★★★")
-    for pid, p in recommends:
+    print(f"\n★★★ あなたにおすすめの問題 (成功確率 45–55%) は{len(recommends)}個あります★★★")
+    # 先頭10個を表示
+    for pid, p in recommends[:10]:
         print(f"{pid:15s}  推定成功確率: {p:.1f}%")
+    # for pid, p in recommends:
+    #     print(f"{pid:15s}  推定成功確率: {p:.1f}%")
 
     print("--------------------------------------------------")
 
