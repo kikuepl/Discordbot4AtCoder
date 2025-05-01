@@ -71,3 +71,77 @@ def format_predicted_solve_probability(predicted_solve_probability: Optional[flo
     else:
         percents = round(predicted_solve_probability * 100)
         return f"{percents}%"
+
+def to_difficulty_model(src) -> ProblemModelWithDifficultyModel:
+    """任意の入力を ProblemModelWithDifficultyModel に統一する"""
+    if isinstance(src, ProblemModelWithDifficultyModel):
+        return src
+
+    if isinstance(src, dict):
+        return ProblemModelWithDifficultyModel(
+            slope=src["slope"],
+            intercept=src["intercept"],
+            difficulty=src["difficulty"],
+            raw_difficulty=src.get("raw_difficulty", src["difficulty"]),
+            discrimination=src["discrimination"],
+            is_experimental=src["is_experimental"],
+        )
+
+    if isinstance(src, ProblemModel):
+        return ProblemModelWithDifficultyModel(
+            slope=src.slope,
+            intercept=src.intercept,
+            difficulty=src.difficulty,
+            raw_difficulty=src.raw_difficulty,
+            discrimination=src.discrimination,
+            is_experimental=src.is_experimental,
+        )
+
+    raise TypeError(f"Unsupported problem model type: {type(src)}")
+
+
+def to_time_model(src) -> ProblemModelWithTimeModel:
+    """
+    任意の入力を ProblemModelWithTimeModel に統一する
+    必須フィールド: slope / intercept / variance
+    """
+    if isinstance(src, ProblemModelWithTimeModel):
+        return src
+
+    # dict 形式
+    if isinstance(src, dict):
+        _check_time_dict(src)
+        return ProblemModelWithTimeModel(
+            slope=src["slope"],
+            intercept=src["intercept"],
+            variance=src["variance"],
+            difficulty=src.get("difficulty"),
+            raw_difficulty=src.get("raw_difficulty"),
+            discrimination=src.get("discrimination"),
+            is_experimental=src["is_experimental"],
+        )
+
+    # 汎用 ProblemModel 形式
+    if isinstance(src, ProblemModel):
+        if src.variance is None:
+            raise ValueError("ProblemModel.variance が None なので TimeModel 化できません")
+        return ProblemModelWithTimeModel(
+            slope=src.slope,
+            intercept=src.intercept,
+            variance=src.variance,
+            difficulty=src.difficulty,
+            raw_difficulty=src.raw_difficulty,
+            discrimination=src.discrimination,
+            is_experimental=src.is_experimental,
+        )
+
+    raise TypeError(f"Unsupported problem model type: {type(src)}")
+
+
+def _check_time_dict(d: dict) -> None:
+    """TimeModel 化に必要なキーがあるか軽く検査"""
+    required = ("slope", "intercept", "variance", "is_experimental")
+    missing = [k for k in required if k not in d]
+    if missing:
+        raise KeyError(f"TimeModel 変換に必要なキーが不足しています: {missing}")
+
